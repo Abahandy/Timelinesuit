@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VR Experience</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+
+    <style>
+       /* Resets and General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background: url('timeline.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+
+          /* Particles Background */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+
+        /* Content Container */
+        .content {
+            position: relative;
+            z-index: 2;
+           opacity: 0;
+        }
+
+       /* Navbar */
+        nav {
+            padding: 1.5rem;
+            background: rgba(15, 5, 36, 0.8);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(82, 255, 252, 0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #52fffc, #ff2ecd);
+            background-clip: text;
+            background-clip: text;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #52fffc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #ff2ecd;
+        }
+
+        /* Hamburger Menu */
+         .hamburger-menu {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 6px;
+        }
+
+        .hamburger-menu span {
+            width: 30px;
+            height: 3px;
+            background: #fff;
+            transition: all 0.3s ease;
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            flex-direction: column;
+            background: rgba(15, 5, 36, 0.9);
+            backdrop-filter: blur(10px);
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 200px;
+            padding: 15px;
+            border-left: 1px solid rgba(82, 255, 252, 0.1);
+        }
+
+        .mobile-nav a {
+            padding: 10px 0px;
+        }
+
+        /* Hero Section Styles */
+        .hero-split {
+           position: relative;
+           height: 100vh;
+           overflow: hidden;
+        }
+        .hero-content-split {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            padding: 2rem;
+            height: 100%; /* Take up the entire height */
+        }
+
+        .hero-text-content {
+            flex: 1;
+            padding: 2rem;
+            text-align: left;
+        }
+
+        .hero-visual-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .hero-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .hero {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            background: rgba(0, 0, 0, 0.5); /* Semi-transparent background for better readability */
+             padding: 2rem;
+            border-radius: 10px;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #52fffc, #ff2ecd);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+             display: inline-block;
+        }
+
+         .hero-title span {
+           display: inline-block;
+        }
+
+        .hero-description {
+            font-size: 1.5rem;
+            color: #ffffff;
+            max-width: 600px;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+        }
+
+        .cta-button {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            background: linear-gradient(45deg, #52fffc, #ff2ecd);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(82, 255, 252, 0.5);
+        }
+
+        .cta-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+       /* Grid Section */
+       .grid-section {
+            padding: 4rem 2rem;
+        }
+
+        .grid-section h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, #52fffc, #ff2ecd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Default to 3 cols */
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+
+         /*  specific grid for courses*/
+        .courses-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+
+        /* Card Styles */
+        .card {
+            background: rgba(15, 5, 36, 0.5);
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(82, 255, 252, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+         .service-card {
+           display: flex;
+           flex-direction: column;
+           align-items: flex-start;
+        }
+
+         .service-card p {
+           margin-bottom: 1rem;
+        }
+
+
+        .course-card {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .course-image {
+            width: 100%;
+            height: auto;
+            border-radius: 10px 10px 0 0;
+            margin-bottom: 1rem;
+            object-fit: cover;
+            aspect-ratio: 16 / 9;
+        }
+
+        .course-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .course-card p {
+           margin-bottom: 1.5rem;
+           font-size:0.8rem;
+           color: #ddd;
+        }
+
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(82, 255, 252, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(82, 255, 252, 0.3);
+            box-shadow: 0 0 20px rgba(82, 255, 252, 0.2);
+        }
+
+        .card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .card h3 {
+            color: #52fffc;
+            margin-bottom: 1rem;
+        }
+           /* Make sure the buttons stay on bottom */
+          .course-card .cta-button {
+            margin-top: auto;
+          }
+
+           /* Animations */
+        @keyframes titleFade {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes subtitleFade {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes buttonFade {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shimmer {
+            from {
+                transform: rotate(45deg) translateX(-100%);
+            }
+            to {
+                transform: rotate(45deg) translateX(100%);
+            }
+        }
+
+       /* Media Queries for responsiveness */
+        @media (max-width: 768px) {
+             .hero-split {
+              height: auto; /* Let hero-split adjust its height on mobile */
+             }
+             .hero-content-split {
+               flex-direction: column; /* Stack content on small screens */
+            }
+            .hero-text-content, .hero-visual-content {
+               padding: 1rem; /* Reduce padding on small screens */
+               flex: 1 1 100%;
+               text-align: center; /* Center text on mobile */
+            }
+
+              .hero-title {
+                font-size: 2.5rem;
+            }
+
+             .hero-description {
+                font-size: 1.2rem;
+            }
+            .nav-links {
+                display: none;
+            }
+
+            .hamburger-menu {
+               display: flex;
+            }
+        }
+
+       /* Media query to make the course grid have 2 columns on smaller screens, also to make sure that any extra item falls to a row */
+        @media (max-width: 900px) {
+          .courses-grid {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          }
+        }
+
+/* Footer Styles */
+.footer-soothing {
+    background: rgba(15, 5, 36, 0.8);
+    color: #ffffff;
+    padding: 40px 0;
+     backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(82, 255, 252, 0.1);
+     position: relative;
+      overflow: hidden;
+}
+
+
+ .footer-soothing::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(82, 255, 252, 0.05), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+    z-index: 0;
+}
+
+.footer-soothing:hover::before {
+     transform: translateX(100%);
+}
+
+.footer-soothing .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+     position: relative;
+     z-index: 1;
+    gap: 20px;
+}
+ .footer-soothing .logo {
+       font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #52fffc, #ff2ecd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+     }
+
+
+.footer-soothing  p {
+  color: #ddd;
+   margin-top: 10px;
+}
+.footer-soothing  h3 {
+  color: #52fffc;
+    margin-bottom: 10px;
+}
+
+
+.footer-soothing .footer-left {
+    flex: 2;
+      min-width: 300px;
+}
+.footer-soothing .footer-right {
+  flex: 1;
+     display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      min-width: 300px;
+
+}
+
+.footer-soothing  ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-soothing ul li {
+    margin-bottom: 5px;
+}
+
+.footer-soothing a {
+    color: #ddd;
+     text-decoration: none;
+     transition: color 0.3s ease;
+}
+
+.footer-soothing  a:hover {
+  color: #52fffc;
+}
+.footer-soothing .social-links {
+     display: flex;
+      gap: 10px;
+      margin-top: 20px;
+}
+.footer-soothing .social-links a{
+    color: #ddd;
+     text-decoration: none;
+     transition: color 0.3s ease;
+}
+.footer-soothing .social-links a:hover {
+    color: #52fffc;
+}
+
+.footer-soothing .footer-bottom {
+   text-align: center;
+  padding-top: 40px;
+    margin-top: 20px;
+     border-top: 1px solid rgba(82, 255, 252, 0.1);
+      position: relative;
+      z-index: 1;
+
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .footer-soothing .footer-content {
+         flex-direction: column;
+         text-align: center;
+      }
+
+      .footer-soothing .footer-left {
+       text-align: center;
+      }
+     .footer-soothing .footer-right{
+           flex-direction: column;
+       }
+}
+    </style>
+    <style>
+        /* Container for text and video */
+        .hero-content-split {
+            display: flex;
+            justify-content: space-between; /* Distribute space evenly */
+            align-items: center;            /* Center items vertically */
+            height: 100%;                   /* Match parent height */
+        }
+        
+        /* Position and align the video */
+        .hero-visual-content {
+            flex: 1;                        /* Allow video container to grow */
+            display: flex;
+            justify-content: flex-end;      /* Align video to the right */
+            align-items: center;            /* Center video vertically */
+            padding-right: 20px;            /* Add space on the right */
+        }
+        
+        /* Position and align the text */
+        .hero-text-content {
+            flex: 1;                        /* Allow text container to grow */
+        }
+        
+        /* Styling and 3D effects for the video */
+        .hero-video {
+            width: 600px;
+            height: 400px;
+            object-fit: cover;              /* Ensure the video fits the box without distortion */
+            border-radius: 10px;            /* Adds rounded corners */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Enhances depth with a shadow */
+            transform: perspective(1000px) rotateY(5deg); /* Subtle 3D tilt */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition effects */
+        }
+        
+        /* Add hover effect for interactivity */
+        .hero-video:hover {
+            transform: perspective(1000px) rotateY(0deg) scale(1.05); /* Rotate back and slightly enlarge */
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5); /* Intensify the shadow on hover */
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div class="content">
+        <nav>
+            <div class="logo">TIMELINESUIT MEDIA</div>
+            <div class="nav-links">
+                <a href="#features-section">Experience</a>
+                <a href="#services-section">Innovation</a>
+                <a href="#contact-section">Connect</a>
+            </div>
+            <div class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+
+        <div class="mobile-nav">
+           <a href="#features-section">Experience</a>
+           <a href="#services-section">Innovation</a>
+           <a href="#contact-section">Connect</a>
+        </div>
+
+        <section class="hero hero-split">
+            <canvas id="hero-canvas"></canvas>
+            <div class="hero-content-split">
+                <div class="hero-text-content">
+                   <h1 class="hero-title">
+                        <!-- Wrap each word in a span -->
+                       <span data-text="Step">Step</span>
+                       <span data-text="Into">Into</span>
+                       <span data-text="The">The</span>
+                       <span data-text="Future">Future</span>
+                   </h1>
+                    <p class="hero-description">
+                        Experience reality reimagined through cutting-edge virtual technology and immersive digital experiences.
+                    </p>
+                    <button class="cta-button">Enter The Tech World</button>
+                </div>
+                <div class="hero-visual-content">
+                    <video class="hero-video" autoplay loop muted>
+                        <source src="vid1.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+        </section>
+        
+        <style>
+        /* Container for text and video */
+        .hero-content-split {
+            display: flex;
+            justify-content: space-between; /* Distribute space evenly */
+            align-items: center;            /* Center items vertically */
+            height: 100%;                   /* Match parent height */
+        }
+        
+        /* Position and align the video */
+        .hero-visual-content {
+            flex: 1;                        /* Allow video container to grow */
+            display: flex;
+            justify-content: flex-end;      /* Align video to the right */
+            align-items: center;            /* Center video vertically */
+            padding-right: 20px;            /* Add space on the right */
+        }
+        
+        /* Position and align the text */
+        .hero-text-content {
+            flex: 1;                        /* Allow text container to grow */
+        }
+        
+        /* Styling and 3D effects for the video */
+        .hero-video {
+            width: 600px;
+            height: 400px;
+            object-fit: cover;              /* Ensure the video fits the box without distortion */
+            border-radius: 10px;            /* Adds rounded corners */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Enhances depth with a shadow */
+            transform: perspective(1000px) rotateY(5deg); /* Subtle 3D tilt */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition effects */
+        }
+        
+        /* Add hover effect for interactivity */
+        .hero-video:hover {
+            transform: perspective(1000px) rotateY(0deg) scale(1.05); /* Rotate back and slightly enlarge */
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5); /* Intensify the shadow on hover */
+        }
+        </style>
+        
+                    
+        </section>
+
+
+        <section class="grid-section" id="features-section">
+            <div class="grid">
+                <div class="card">
+                    <h3>Immersive Experience</h3>
+                    <p>Step into a world where reality and imagination merge, creating unprecedented digital experiences.</p>
+                </div>
+                <div class="card">
+                    <h3>Advanced Technology</h3>
+                    <p>Powered by state-of-the-art VR technology, delivering unparalleled immersion and interaction.</p>
+                </div>
+                <div class="card">
+                    <h3>Infinite Possibilities</h3>
+                    <p>Explore endless virtual worlds and experiences limited only by imagination.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid-section" id="video-gallery-section">
+            <style>
+                  /* Video Gallery styles */
+        
+                .video-gallery {
+                    padding: 4rem 2rem;
+                }
+        
+                .video-gallery h2 {
+                    text-align: center;
+                    margin-bottom: 2rem;
+                    background: linear-gradient(45deg, #52fffc, #ff2ecd);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    font-size: 2rem;
+                }
+        
+                .video-gallery .grid {
+                    margin: 0 auto;
+                     max-width: 1200px;
+                }
+        
+        
+                 .video-gallery .course-card {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+        
+                 .video-gallery .course-card iframe {
+                    width: 100%;
+                     aspect-ratio: 16 / 9;
+                     display: block;
+                      border: none;
+                    border-radius: 10px 10px 0 0;
+                    margin-bottom: 1rem;
+                }
+                 .video-gallery .video-card-content {
+                  padding: 0 1rem 0 1rem;
+                    color: #ffffff;
+                  }
+        
+        
+                .video-gallery  .video-card-content h3 {
+                   color: #52fffc;
+                      margin-bottom: 0.5rem;
+                   }
+                .video-gallery .video-card-content p {
+                    font-size:0.8rem;
+                   color: #ddd;
+                  margin-bottom: 1.5rem;
+                   }
+             .video-gallery .course-card .cta-button {
+                    margin-top: auto;
+                  }
+        
+            </style>
+            <h2>YouTube Video Gallery</h2>
+            <div class="grid courses-grid">
+                <!-- Video Card 1 -->
+                <div class="card course-card">
+                    <iframe src="https://www.youtube.com/embed/fQ4sqPq2FQg" title="YouTube video 1"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                    <div class="video-card-content">
+                        <h3>Python Hack</h3>
+                        <p>How to Hack WhatsApp Number Using Python.</p>
+                         <a href="https://www.youtube.com/embed/fQ4sqPq2FQg" class="cta-button">Learn More</a>
+                    </div>
+                </div>
+        
+                <!-- Video Card 2 -->
+                <div class="card course-card">
+                    <iframe src="https://www.youtube.com/embed/iC5FbnQIb7Q" title="YouTube video 2"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                    <div class="video-card-content">
+                        <h3>Python Tutorial</h3>
+                        <p>How to download youtube video in python.</p>
+                         <a href="https://www.youtube.com/embed/iC5FbnQIb7Q" class="cta-button">Learn More</a>
+                    </div>
+                </div>
+        
+                <!-- Video Card 3 -->
+                <div class="card course-card">
+                    <iframe src="https://www.youtube.com/embed/HfurQPa5jF8" title="YouTube video 3"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                     <div class="video-card-content">
+                        <h3>Data Analysis</h3>
+                        <p>AI Tool That Will Analyse ANY Dataset in SECONDS</p>
+                          <a href="https://www.youtube.com/embed/HfurQPa5jF8" class="cta-button">Learn More</a>
+                    </div>
+                </div>
+        
+                 <!-- Video Card 4 -->
+                <div class="card course-card">
+                    <iframe src="https://www.youtube.com/embed/Ht3WAYY2tts" title="YouTube video 4"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                    <div class="video-card-content">
+                         <h3>Excel Hack</h3>
+                        <p>6 Excel Tools Most Users Never Think to Use</p>
+                          <a href="https://www.youtube.com/embed/Ht3WAYY2tts" class="cta-button">Learn More</a>
+                    </div>
+                </div>
+        
+                <!-- Video Card 5 -->
+                 <div class="card course-card">
+                     <iframe src="https://www.youtube.com/embed/0AAJwKfidAQ" title="YouTube video 5" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-card-content">
+                         <h3>Simplify Your Workflow Today</h3>
+                        <p>Say Goodbye to Complex Excel Formulas</p>
+                          <a href="https://www.youtube.com/embed/0AAJwKfidAQ" class="cta-button">Learn More</a>
+                    </div>
+                </div>
+        
+                <!-- Video Card 6 -->
+                <div class="card course-card">
+                   <iframe src="https://www.youtube.com/embed/IynS_ITaIAo" title="YouTube video 6" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                   <div class="video-card-content">
+                         <h3>Excel Hack</h3>
+                        <p>5 HIDDEN Excel Tools Almost Nobody Is Talking About</p>
+                          <a href="https://www.youtube.com/embed/IynS_ITaIAo" class="cta-button">Learn More</a>
+                     </div>
+                </div>
+        
+                <!-- Video Card 7 -->
+                <div class="card course-card">
+                     <iframe src="https://www.youtube.com/embed/PtdQnZBKhZk" title="YouTube video 7" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-card-content">
+                         <h3>Python Hack</h3>
+                        <p>Python Phone Tracker: Locate Numbers Instantly</p>
+                          <a href="https://www.youtube.com/embed/PtdQnZBKhZk" class="cta-button">Learn More</a>
+                   </div>
+                </div>
+        
+                <!-- Video Card 8 -->
+                <div class="card course-card">
+                     <iframe src="https://www.youtube.com/embed/C6FFk66Ebw8" title="YouTube video 8" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-card-content">
+                        <h3>Pyhon Hack</h3>
+                        <p>How to Create QR code in Python</p>
+                         <a href="https://www.youtube.com/embed/C6FFk66Ebw8" class="cta-button">Learn More</a>
+                    </div>
+                </div>
+                 <!-- Video Card 9 -->
+                  <div class="card course-card">
+                    <iframe src="https://www.youtube.com/embed/K-9xpUTGhkM" title="YouTube video 9"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                    <div class="video-card-content">
+                         <h3>Excel Tips and Tricks</h3>
+                        <p>How to Insert a Line Break in Excel </p>
+                        <a href="https://www.youtube.com/embed/K-9xpUTGhkM" class="cta-button">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+
+        <section class="grid-section" id="services-section">
+           <h2>Our Services</h2>
+            <div class="grid">
+                <!-- Data Analysis/Analytics -->
+                <div class="card service-card">
+                    <h3>Data Analysis / Analytics</h3>
+                     <p>Leverage data-driven insights to inform your strategic decisions. We help you understand your data better and make the right calls.</p>
+                </div>
+
+                <!-- Cybersecurity/Ethical Hacking -->
+                <div class="card service-card">
+                    <h3>Cybersecurity / Ethical Hacking</h3>
+                     <p>Protect your organization with robust cybersecurity solutions. We use ethical hacking techniques to identify potential threats and safeguard your digital assets.</p>
+                </div>
+
+                <!-- AI Intensive/AI Content Creation -->
+                <div class="card service-card">
+                    <h3>AI Intensive / AI Content Creation</h3>
+                     <p>Enhance your capabilities with powerful AI solutions. From AI driven data analysis to content creation, we have got you covered.</p>
+                </div>
+
+                <!-- Basic and Advanced Computer Training -->
+                 <div class="card service-card">
+                     <h3>Basic and Advanced Computer Training</h3>
+                     <p>Upskill your teams with comprehensive computer training programs. Our courses are designed for different skill levels.</p>
+                </div>
+
+                <!-- Video Editing/Documentary Production -->
+                <div class="card service-card">
+                     <h3>Video Editing / Documentary Production</h3>
+                     <p>Create engaging videos and documentaries for your brand. We use advanced editing techniques to tell impactful stories.</p>
+                </div>
+
+                <!-- Machine Learning -->
+               <div class="card service-card">
+                   <h3>Machine Learning</h3>
+                    <p>Harness the potential of machine learning for predictive solutions. We develop machine learning models to help you predict and act better.</p>
+                </div>
+
+                <!-- Website Design -->
+                <div class="card service-card">
+                     <h3>Website Design</h3>
+                     <p>Create captivating user interfaces and user experiences. We help you in building the perfect website for your needs.</p>
+                </div>
+            </div>
+             <div class="services-cta">
+         <a href="#contact-section" class="cta-button">Explore Solutions</a>
+      </div>
+        </section>
+
+      <section class="grid-section" id="courses-section">
+        <h2>Explore Our Courses</h2>
+        <div class="grid courses-grid">
+           <!-- Cybersecurity / Ethical Hacking-->
+            <div class="card course-card">
+                <img src="https://placehold.co/400x250/007bff/ffffff" alt="Cybersecurity / Ethical Hacking" class="course-image">
+                <h3>Cybersecurity / Ethical Hacking</h3>
+                <p>NICOLAI NIELSEN
+                    2325
+                    61.6
+                    CAREER
+                    Introduction
+                    17.00</p>
+                <a href="cyber security.html" class="cta-button">Learn More</a>
+             </div>
+
+            <!-- Data Analysis / Analytics -->
+            <div class="card course-card">
+                <img src="https://placehold.co/400x250/28a745/ffffff" alt="Data Analysis / Analytics" class="course-image">
+                <h3>Data Analysis / Analytics</h3>
+                  <p>NICOLAI NIELSEN
+                    2325
+                    61.6
+                    CAREER
+                    Introduction
+                    17.00</p>
+                <a href="analysis.html" class="cta-button">Learn More</a>
+            </div>
+
+            <!--AI Intensive / AI content creation  -->
+            <div class="card course-card">
+                <img src="https://placehold.co/400x250/dc3545/ffffff" alt="AI Intensive / AI content creation " class="course-image">
+                <h3>AI Intensive / AI content creation </h3>
+                  <p>NICOLAI NIELSEN
+                    2325
+                    61.6
+                    CAREER
+                    Introduction
+                    17.00</p>
+               <a href="AI Intensive.html" class="cta-button">Learn More</a>
+            </div>
+
+             <!-- Basic and Advanced Computer Training-->
+            <div class="card course-card">
+                <img src="https://placehold.co/400x250/17a2b8/ffffff" alt="Basic and Advanced Computer Training" class="course-image">
+                <h3>Basic and Advanced Computer Training</h3>
+                 <p>NICOLAI NIELSEN
+                    2325
+                    61.6
+                    CAREER
+                    Introduction
+                    17.00</p>
+                <a href="#" class="cta-button">Learn More</a>
+            </div>
+
+            <!--Video editing / Documentary production -->
+            <div class="card course-card">
+                <img src="https://placehold.co/400x250/ffc107/000000" alt="Video editing / Documentary production" class="course-image">
+                 <h3>Video editing / Documentary production</h3>
+                  <p>NICOLAI NIELSEN
+                    2325
+                    61.6
+                    CAREER
+                    Introduction
+                    17.00</p>
+                <a href="Videoediting.html" class="cta-button">Learn More</a>
+            </div>
+
+
+            <!--Machine Learning  -->
+            <div class="card course-card">
+                <img src="https://placehold.co/400x250/007bff/ffffff" alt="Machine Learning " class="course-image">
+                  <h3>Machine Learning </h3>
+                   <p>NICOLAI NIELSEN
+                    2325
+                    61.6
+                    CAREER
+                    Introduction
+                    17.00</p>
+               <a href="MachineLearning.html" class="cta-button">Learn More</a>
+             </div>
+
+             <!--Website Design -->
+            <div class="card course-card">
+                <img src="https://placehold.co/400x250/28a745/ffffff" alt="OpenCV with GPU" class="course-image">
+                 <h3>Website Design </h3>
+                 <p>NICOLAI NIELSEN
+                    2325
+                    61.6
+                    CAREER
+                    Introduction
+                    17.00</p>
+                <a href="WebsiteDesign.html" class="cta-button">Learn More</a>
+            </div>
+
+            <!--Research Paper-->
+            <div class="card course-card">
+              <img src="https://placehold.co/400x250/dc3545/ffffff" alt="Research Paper" class="course-image">
+                <h3>Research Paper</h3>
+                 <p>NICOLAI NIELSEN
+                    2325
+                    61.6
+                    CAREER
+                    Introduction
+                    17.00</p>
+              <a href="#" class="cta-button">Learn More</a>
+            </div>
+
+            <!-- SegFormer-->
+           <div class="card course-card">
+               <img src="https://placehold.co/400x250/007bff/ffffff" alt="SegFormer" class="course-image">
+                <h3>SegFormer</h3>
+               <p>NICOLAI NIELSEN
+                    2325
+                    61.6
+                    CAREER
+                    Introduction
+                    17.00</p>
+               <a href="#" class="cta-button">Learn More</a>
+            </div>
+         </div>
+    </section>
+
+        <section class="grid-section" id="consultations-section">
+            <h2>Consultations</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Business Strategy</h3>
+                    <p>Get expert advice on business strategy and growth.</p>
+                </div>
+                <div class="card">
+                    <h3>Technical Consulting</h3>
+                    <p>Receive guidance on technical challenges and solutions.</p>
+                </div>
+                <div class="card">
+                    <h3>Content Strategy</h3>
+                     <p>Strategize how you can use content for your business goals.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid-section" id="ai-projects-section">
+            <h2>AI/Data Analysis Projects</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Predictive Analytics</h3>
+                    <p>Utilize AI to predict future trends and behaviors.</p>
+                     <a href="#" class="cta-button">Learn More</a>
+                </div>
+                <div class="card">
+                    <h3>Data Visualization</h3>
+                    <p>Transform complex data into insightful visualizations.</p>
+                     <a href="#" class="cta-button">Learn More</a>
+                </div>
+                <div class="card">
+                   <h3>Natural Language Processing</h3>
+                   <p>Use the power of NLP to understand and generate text.</p>
+                   <a href="#" class="cta-button">Learn More</a>
+                </div>
+            </div>
+        </section>
+        <section id="contact-section">
+        </section>
+    </div>
+    <footer class="footer-soothing">
+        <div class="footer-content">
+            <div class="footer-left">
+               <div class="logo">TIMELINESUIT MEDIA</div>
+                 <p> Step into the future of virtual reality experiences.</p>
+                 <!-- Place the links to the social media library here -->
+                <div class="social-links">
+                  <a href="#" target="_blank" aria-label="Facebook">Facebook</a>
+                  <a href="#" target="_blank" aria-label="Twitter">Twitter</a>
+                  <a href="#" target="_blank" aria-label="LinkedIn">LinkedIn</a>
+                  <a href="#" target="_blank" aria-label="YouTube">YouTube</a>
+                  <a href="#" target="_blank" aria-label="TikTok">TikTok</a>
+                </div>
+            </div>
+            <div class="footer-right">
+                <div class="footer-nav">
+                    <h3>Explore</h3>
+                    <ul>
+                      <li><a href="#features-section">Experience</a></li>
+                        <li><a href="#services-section">Innovation</a></li>
+                         <li><a href="#courses-section">Courses</a></li>
+                        <li><a href="#consultations-section">Connect</a></li>
+
+                    </ul>
+                </div>
+               <div class="footer-contact">
+                  <h3>Contact Us</h3>
+                  <p>Email: <a href="mailto:info@example.com">info@example.com</a></p>
+                  <p>Phone: <a href="tel:+15551234567">+1 (555) 123-4567</a></p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+             <p>© 2024 Timelinesuit Media. All rights reserved.</p>
+            </div>
+    </footer>
+      <script>
+        // Particle JS Config
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: '#ffffff'
+                },
+                shape: {
+                    type: 'circle',
+                    stroke: {
+                        width: 0,
+                        color: '#000000'
+                    },
+                    polygon: {
+                        nb_sides: 5
+                    },
+                    image: {
+                        src: 'img/github.svg',
+                        width: 100,
+                        height: 100
+                    }
+                },
+                opacity: {
+                    value: 0.5,
+                    random: false,
+                    anim: {
+                        enable: false,
+                        speed: 1,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: {
+                        enable: false,
+                        speed: 40,
+                        size_min: 0.1,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#ffffff',
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 6,
+                    direction: 'none',
+                    random: false,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false,
+                    attract: {
+                        enable: false,
+                        rotateX: 600,
+                        rotateY: 1200
+                    }
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: 'grab'
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: 'push'
+                    },
+                    resize: true
+                }
+            },
+            retina_detect: true
+        });
+
+    gsap.to(".content", {
+         opacity: 1,
+         duration: 1.2,
+        ease: "power2.out",
+         delay: 0.2,
+       });
+    </script>
+</body>
+</html>
